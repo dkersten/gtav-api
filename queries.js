@@ -2,7 +2,7 @@ const { response } = require('express')
 const dbifno = require('./dbinfo')
 
 const getVehicles = (request, response) => {
-    dbifno.pool.query('SELECT * FROM vehicles', (error, results) => {
+    dbifno.pool.query('SELECT * FROM vehicles limit 20', (error, results) => {
         if (error) {
             throw error
         }
