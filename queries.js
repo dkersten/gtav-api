@@ -2,14 +2,30 @@ const { response } = require('express')
 const dbifno = require('./dbinfo')
 
 const getVehicles = (request, response) => {
-    const limit = parseInt(request.query.limit)
-    console.log(limit)
-    dbifno.pool.query(`SELECT * FROM vehicles limit ${limit}`, (error, results) => {
-        if (error) {
-            throw error
-        }
-        response.status(200).json(results.rows)
-    })
+    const limit = request.query.limit
+    const offset = request.query.offset
+    // console.log(limit)
+    // console.log(offset)
+
+    //checks for url queries that are undefined and returns number of vehicles for pagination purposes
+    if (limit === undefined && offset === undefined) {
+        console.log("undefined params")
+        dbifno.pool.query(`SELECT * FROM vehicles`, (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(200).json(parseInt(results.rows.length))
+        })
+    //checks for defined URL queries and then returns the corresponding rows 
+    } else {
+        console.log("defined params")
+        dbifno.pool.query(`SELECT * FROM vehicles limit ${limit} offset ${offset}`, (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(200).json(results.rows)
+        })
+    }
 }
 
 const getVehicleById = (request, response) => {
